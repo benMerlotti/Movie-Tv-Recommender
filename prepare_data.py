@@ -78,6 +78,21 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['keyword_names'] = list_of_keyword_names_for_this_movie
 
+            # Get cast
+
+            list_of_top_cast_names = []
+            num_top_cast_to_extract = 3
+            credits_from_movie = raw_movie_dict.get('credits_data', {})
+            cast_from_movie = credits_from_movie.get('cast', [])
+            if isinstance(cast_from_movie, list):
+                for actor in cast_from_movie[:num_top_cast_to_extract]:
+                    if isinstance(actor, dict):
+                        name = actor.get('name')
+                        if name:
+                            list_of_top_cast_names.append(name)
+
+            cleaned_movie_entry['cast'] = list_of_top_cast_names
+
             print(f"Processing: ID {cleaned_movie_entry['id']}, Title: {cleaned_movie_entry['title']}, Genres: {cleaned_movie_entry['genre_names']}, Keywords: {cleaned_movie_entry['keyword_names']}")
 
             processed_movies_list.append(cleaned_movie_entry)
