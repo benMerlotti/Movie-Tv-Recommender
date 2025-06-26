@@ -93,6 +93,19 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['cast'] = list_of_top_cast_names
 
+            # Get Director
+
+            directors_names_found = []
+            crew_from_movie = credits_from_movie.get('crew', [])
+
+            for crew_member in crew_from_movie:
+                if crew_member['job'] == 'Director':
+                    name = crew_member.get('name')
+                    if name:
+                        directors_names_found.append(name)
+
+            cleaned_movie_entry['director'] = directors_names_found
+
             print(f"Processing: ID {cleaned_movie_entry['id']}, Title: {cleaned_movie_entry['title']}, Genres: {cleaned_movie_entry['genre_names']}, Keywords: {cleaned_movie_entry['keyword_names']}")
 
             processed_movies_list.append(cleaned_movie_entry)
