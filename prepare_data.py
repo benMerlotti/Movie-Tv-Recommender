@@ -122,3 +122,5 @@ if __name__ == "__main__":
         # pp.pprint(processed_movies_list[0]) # if you have pprint imported and pp defined
         print(processed_movies_list[0])
 
+        print('test')
+
