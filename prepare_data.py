@@ -72,7 +72,7 @@ if __name__ == "__main__":
                         name_formatted = name_lower.replace(" ", "")
                         name_formatted_punctuation = name_formatted.replace(".", "")
                         processed_genre_names.append(name_formatted_punctuation)
-            cleaned_movie_entry['processed_genre_names'] = processed_genre_names
+            cleaned_movie_entry['genres_processed'] = processed_genre_names
 
             # Get keyword names
 
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                         name_formatted = name_lower.replace(" ", "")
                         name_formatted_punctuation = name_formatted.replace(".", "")
                         processed_keywords.append(name_formatted_punctuation)
-            cleaned_movie_entry['processed_keywords'] = processed_keywords
+            cleaned_movie_entry['keywords_processed'] = processed_keywords
 
             
 
@@ -129,7 +129,7 @@ if __name__ == "__main__":
                         name_formatted = name_lower.replace(" ", "")
                         name_formatted_punctuation = name_formatted.replace(".", "")
                         processed_cast.append(name_formatted_punctuation)
-            cleaned_movie_entry['processed_cast'] = processed_cast
+            cleaned_movie_entry['top_cast_processed'] = processed_cast
 
 
             # Get Director
@@ -220,10 +220,26 @@ if __name__ == "__main__":
         print(f"\nFinished processing. {len(processed_movies_list)} movies processed.")
     # Later, we'll save processed_movies_list to a new file.
     # If you want to see the first processed entry:
-    if len(processed_movies_list) > 0:
-        print("\nFirst processed movie entry (so far):")
-        # pp.pprint(processed_movies_list[0]) # if you have pprint imported and pp defined
-        print(processed_movies_list[0])
+    if processed_movies_list: # Check if we actually have processed data
+        # If you still have your debug print for the first item, you can see the soup:
+        print("\nFirst fully processed movie entry (with content_soup):")
+        import pprint # Make sure pprint is imported if you use it
+        pp = pprint.PrettyPrinter(indent=2)
+        pp.pprint(processed_movies_list[0])
 
-        print('test')
+        processed_output_filename = "movies_prepared_for_recommender.json"
+
+        print(f"\nSaving {len(processed_movies_list)} processed movies to {processed_output_filename}...")
+
+        try:
+            with open(processed_output_filename, 'w', encoding='utf-8') as outfile: 
+                json.dump(processed_movies_list, outfile, indent=2)
+            print(f"Successfully saved processed data to {processed_output_filename}")
+        except IOError as e:
+            print(f"Error: Could not write to file {processed_output_filename}. IO Error: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred while saving processed data: {e}")
+    else:
+        print("\nNo movies were processed, so nothing to save.")
+
 
