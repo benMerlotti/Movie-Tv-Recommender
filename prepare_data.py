@@ -49,6 +49,8 @@ if __name__ == "__main__":
             cleaned_movie_entry['id'] = raw_movie_dict['id']
             cleaned_movie_entry['title'] = raw_movie_dict['title']
 
+            # Get genre names using genre_id_name_map
+
             list_of_genre_names_for_this_movie = []
             genre_ids_from_movie = raw_movie_dict.get('genre_ids', [])
 
@@ -60,7 +62,23 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['genre_names'] = list_of_genre_names_for_this_movie
 
-            print(f"Processing: ID {cleaned_movie_entry['id']}, Title: {cleaned_movie_entry['title']}, Genres: {cleaned_movie_entry['genre_names']}")
+            # Get keyword names
+
+            list_of_keyword_names_for_this_movie = []
+            keywords_from_movie = raw_movie_dict.get('keywords_data')
+
+            if keywords_from_movie and isinstance(keywords_from_movie, dict):
+                list_of_keyword_dicts = keywords_from_movie.get('keywords')
+                if list_of_keyword_dicts and isinstance(list_of_keyword_dicts, list):
+                    for keyword_dict_item in list_of_keyword_dicts:
+                        if isinstance(keyword_dict_item, dict):
+                            name = keyword_dict_item.get('name')
+                            if name:
+                                list_of_keyword_names_for_this_movie.append(name)
+
+            cleaned_movie_entry['keyword_names'] = list_of_keyword_names_for_this_movie
+
+            print(f"Processing: ID {cleaned_movie_entry['id']}, Title: {cleaned_movie_entry['title']}, Genres: {cleaned_movie_entry['genre_names']}, Keywords: {cleaned_movie_entry['keyword_names']}")
 
             processed_movies_list.append(cleaned_movie_entry)
 
