@@ -106,6 +106,10 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['director'] = directors_names_found
 
+            # Get Overview
+
+            cleaned_movie_entry['overview'] = raw_movie_dict.get('overview', "")
+
             print(f"Processing: ID {cleaned_movie_entry['id']}, Title: {cleaned_movie_entry['title']}, Genres: {cleaned_movie_entry['genre_names']}, Keywords: {cleaned_movie_entry['keyword_names']}")
 
             processed_movies_list.append(cleaned_movie_entry)
