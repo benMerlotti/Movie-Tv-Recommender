@@ -70,33 +70,39 @@ if __name__ == "__main__":
 
             print(f"Shape of Cosine Similarity matrix: {cosine_sim_matrix.shape}")
 
-            if movie_titles:
-                test_movie_index = 0
+          # --- INTERACTIVE RECOMMENDATION LOOP (This is the CLI part) ---
+            print("\n--- Movie Recommender Ready! ---")
+            print("Enter a movie title to get recommendations.")
+            print("Type 'quit' (or 'exit', 'q') to stop.")
 
-                if 0 <= test_movie_index < len(movie_titles):
-                    test_movie_title = movie_titles[test_movie_index]
+            while True: # Start an infinite loop (we'll break out of it)
+                user_input_title = input("\nMovie title: ") # Prompt user and get their input
 
-                    print(f"\n--- Attempting to get recommendations for: '{test_movie_title}' ---")
+                # Check if the user wants to quit
+                if user_input_title.lower() in ['quit', 'exit', 'q']:
+                    print("Exiting recommender. Goodbye!")
+                    break # Exit the while loop
 
-                    recommendations = get_recommendations(
-                        input_title=test_movie_title,
-                        titles_list=movie_titles,
-                        similarity_matrix=cosine_sim_matrix,
-                        num_recommendations=5
-                    )
+                if not user_input_title: # Handle if the user just presses Enter
+                    print("Please enter a movie title or type 'quit'.")
+                    continue # Go to the start of the loop for new input
 
-                    if isinstance(recommendations, str):
-                        print(recommendations)
-                    elif recommendations:
-                        print(f"\nTop 5 recommendations for '{test_movie_title}':")
-                        for i, rec_title_with_score in enumerate(recommendations):
-                            print(f" {i+1}. {rec_title_with_score}")
-                    else:
-                        print("Received an empty list of recommendations.")
-                else:
-                    print(f"Error Test movie index {test_movie_index}  is out of bounds.")
-            else:
-                print("Error: movie_titles list is empty, cannpt pick a test movie")
-                    
-    else:
-        print("Failed to load processed movie data")
+                # Call your existing recommendation function
+                recommendations = get_recommendations(
+                    input_title=user_input_title, 
+                    titles_list=movie_titles,
+                    similarity_matrix=cosine_sim_matrix,
+                    num_recommendations=5 # Or however many you want to show
+                )
+
+                # Display the results
+                if isinstance(recommendations, str): # Check if it returned an error message string
+                    print(recommendations) # Print the error (e.g., "Movie not found")
+                elif recommendations: # Check if the list of recommendations is not empty
+                    print(f"\nTop 5 recommendations for '{user_input_title}':")
+                    for i, rec_title_with_score in enumerate(recommendations, start=1):
+                        print(f"  {i}. {rec_title_with_score}")
+                else: # This case should ideally be covered by the error string check
+                      # but good to have a fallback.
+                    print(f"Sorry, no recommendations found for '{user_input_title}'.")
+            # --- END INTERACTIVE LOOP ---
