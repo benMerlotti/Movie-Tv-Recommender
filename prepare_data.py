@@ -62,6 +62,18 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['genre_names'] = list_of_genre_names_for_this_movie
 
+            raw_genre_names = cleaned_movie_entry.get('genre_names', "")
+            processed_genre_names = []
+
+            if isinstance(raw_genre_names, list):
+                for name_string in raw_genre_names:
+                    if isinstance(name_string, str):
+                        name_lower = name_string.lower()
+                        name_formatted = name_lower.replace(" ", "")
+                        name_formatted_punctuation = name_formatted.replace(".", "")
+                        processed_genre_names.append(name_formatted_punctuation)
+            cleaned_movie_entry['processed_genre_names'] = processed_genre_names
+
             # Get keyword names
 
             list_of_keyword_names_for_this_movie = []
@@ -78,6 +90,20 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['keyword_names'] = list_of_keyword_names_for_this_movie
 
+            raw_keywords = cleaned_movie_entry.get('keyword_names', [])
+            processed_keywords = []
+
+            if isinstance(raw_keywords, list):
+                for name_string in raw_keywords:
+                    if isinstance(name_string, str):
+                        name_lower = name_string.lower()
+                        name_formatted = name_lower.replace(" ", "")
+                        name_formatted_punctuation = name_formatted.replace(".", "")
+                        processed_keywords.append(name_formatted_punctuation)
+            cleaned_movie_entry['processed_keywords'] = processed_keywords
+
+            
+
             # Get cast
 
             list_of_top_cast_names = []
@@ -93,6 +119,19 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['cast'] = list_of_top_cast_names
 
+            raw_cast = cleaned_movie_entry.get('cast', [])
+            processed_cast = []
+
+            if isinstance(raw_cast, list):
+                for name_string in raw_cast:
+                    if isinstance(name_string, str):
+                        name_lower = name_string.lower()
+                        name_formatted = name_lower.replace(" ", "")
+                        name_formatted_punctuation = name_formatted.replace(".", "")
+                        processed_cast.append(name_formatted_punctuation)
+            cleaned_movie_entry['processed_cast'] = processed_cast
+
+
             # Get Director
 
             directors_names_found = []
@@ -106,13 +145,77 @@ if __name__ == "__main__":
 
             cleaned_movie_entry['director'] = directors_names_found
 
+            raw_director = cleaned_movie_entry.get('director', "")
+            processed_director = []
+
+            if isinstance(raw_director, list):
+                for name_string in raw_director:
+                    if isinstance(name_string, str):
+                        name_lower = name_string.lower()
+                        name_formatted = name_lower.replace(" ", "")
+                        name_formatted_punctuation = name_formatted.replace(".", "")
+                        processed_director.append(name_formatted_punctuation)
+            cleaned_movie_entry['director_processed'] = processed_director
+
+
+
             # Get Overview
 
             cleaned_movie_entry['overview'] = raw_movie_dict.get('overview', "")
 
+            raw_overview = cleaned_movie_entry.get('overview', "")
+
+            processed_overview = raw_overview.lower()
+
+            cleaned_movie_entry['overview_processed'] = processed_overview
+
+            # --- Build Content Soup ---
+
+            soup_components = []
+
+           # 1. Overview (split into words)
+            overview_str = cleaned_movie_entry.get('overview_processed', "")
+            if overview_str: # Check if it's not an empty string
+                soup_components.extend(overview_str.split()) # Split by space and add words
+
+            # 2. Genres (already a list of processed strings)
+            genres_list = cleaned_movie_entry.get('genres_processed', [])
+            soup_components.extend(genres_list)
+
+            # 3. Keywords (already a list of processed strings)
+            keywords_list = cleaned_movie_entry.get('keywords_processed', [])
+            soup_components.extend(keywords_list)
+
+            # 4. Top Cast (already a list of processed strings)
+            #    Consider adding cast members multiple times to give them more weight (optional)
+            #    Example: for _ in range(2): soup_components.extend(top_cast_list)
+            top_cast_list = cleaned_movie_entry.get('top_cast_processed', [])
+            soup_components.extend(top_cast_list) 
+            # If you want to weight them, you could do:
+            # for _ in range(2): # Add each cast member twice
+            #    soup_components.extend(top_cast_list)
+
+
+            # 5. Director (a single processed string, or None)
+            #    Consider adding director multiple times for weight (optional)
+            #    Example: for _ in range(3): if director_str: soup_components.append(director_str)
+            director_list = cleaned_movie_entry.get('director_processed', [])
+            if director_list: # Check if it's not None and not an empty string
+                soup_components.extend(director_list)
+                # If you want to weight the director, you could do:
+                # soup_components.append(director_str) # Add a second time
+                # soup_components.append(director_str) # Add a third time
+
+            # 6. Join all components into a single string, separated by spaces
+            final_content_soup = " ".join(soup_components)
+            
+            cleaned_movie_entry['content_soup'] = final_content_soup
+            # --- End Create Content Soup ---
+
             print(f"Processing: ID {cleaned_movie_entry['id']}, Title: {cleaned_movie_entry['title']}, Genres: {cleaned_movie_entry['genre_names']}, Keywords: {cleaned_movie_entry['keyword_names']}")
 
             processed_movies_list.append(cleaned_movie_entry)
+
 
         print(f"\nFinished processing. {len(processed_movies_list)} movies processed.")
     # Later, we'll save processed_movies_list to a new file.
